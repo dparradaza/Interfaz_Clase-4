@@ -9,6 +9,8 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -24,7 +26,10 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
-public class loginTemplate extends JFrame {
+import App.services.ObjGraficoService;
+import App.services.RecursosService;
+
+public class loginTemplate extends JFrame implements ActionListener{
 
 	private JPanel pDerecha, pIzquierda;
 	private JLabel lEslogan, lNotificaciones, lUsuario, lPortada, lIconos;
@@ -39,12 +44,19 @@ public class loginTemplate extends JFrame {
 	private Font fontTPrincipal, fontBotones, fontSubtitulo;
 	private Cursor cMano;
 	private Border border;
-
+	//DEclarar servicios
+    private ObjGraficoService sObjGraficos;
+    private RecursosService sRecursos;
+	
 	public loginTemplate() {
+        sObjGraficos = ObjGraficoService.getService();
+        sRecursos = RecursosService.getService();
+        
 		this.crearObjDecoradores();
 		this.crearJPanels();
 		this.Jcrearlabels();
 		this.crearJTextField();
+		this.passwordField();
 		this.crearJButtons();
 		this.crearcomboBox();
 		this.crearCheckBox();
@@ -59,168 +71,117 @@ public class loginTemplate extends JFrame {
 	}
 
 	public void crearJPanels() {
-		pIzquierda = new JPanel();
-		pIzquierda.setSize(600, 500);
-		pIzquierda.setLocation(0, 0);
-		pIzquierda.setBackground(new Color(245, 245, 245));
-		pIzquierda.setLayout(null);
-		this.add(pIzquierda);
 
-		pDerecha = new JPanel();
-		pDerecha.setSize(400, 500);
-		pDerecha.setLocation(600, 0);
-		pDerecha.setBackground(new Color(78, 115, 223));
-		pDerecha.setLayout(null);
+        pIzquierda = sObjGraficos.construirJPanel(
+            0, 0, 600, 500, new Color(245, 245, 245), null
+        );
+        this.add(pIzquierda);
+
+        pDerecha = sObjGraficos.construirJPanel(
+            600, 0, 400, 500, sRecursos.getColorAzul(), null
+        );
+
 		this.add(pDerecha);
 	}
+
 	public void crearJTextField() {
-		tNombreUsuario = new JTextField("User");
-		tNombreUsuario.setSize(300, 40);
-		tNombreUsuario.setLocation((pDerecha.getWidth() - tNombreUsuario.getWidth()) / 2, 120);
-		tNombreUsuario.setForeground(Color.DARK_GRAY);
-		tNombreUsuario.setBackground(new Color(78, 115, 223));
-		tNombreUsuario.setCaretColor(Color.BLUE);
-		tNombreUsuario.setBorder(border);
-		tNombreUsuario.setFont(fontBotones);
-		tNombreUsuario.setHorizontalAlignment(SwingConstants.CENTER);
+		tNombreUsuario =sObjGraficos.construirJTextField("Usuario", 
+				((pDerecha.getWidth() - 300)/ 2),120,300,40, 
+				new Color(78, 115, 223), sRecursos.getColorGrisOscuro(), 
+				sRecursos.getColorGrisOscuro(), sRecursos.getFontBotones(), sRecursos.getBorder(), "c");
+
 		pDerecha.add(tNombreUsuario);
 
-		tClaveUsuario = new JPasswordField();
-		tClaveUsuario.setSize(300, 40);
-		tClaveUsuario.setLocation((pDerecha.getWidth() - tClaveUsuario.getWidth()) / 2, 180);
-		tClaveUsuario.setForeground(Color.DARK_GRAY);
-		tClaveUsuario.setBackground(new Color(78, 115, 223));
-		tClaveUsuario.setBorder(border);
-		tClaveUsuario.setCaretColor(Color.BLUE);
-		tClaveUsuario.setHorizontalAlignment(SwingConstants.CENTER);
-		pDerecha.add(tClaveUsuario);
 	}
-	public void crearJButtons() {
-		bEntrar = new JButton("Siguiente >");
-		bEntrar.setSize(125, 45);
-		bEntrar.setLocation((pDerecha.getWidth() - bEntrar.getWidth() / 2) - 125, 300);
-		bEntrar.setFocusable(false);
-		bEntrar.setBackground(new Color(78, 115, 223));
-		bEntrar.setForeground(Color.WHITE);
-		bEntrar.setFont(fontBotones);
-		bEntrar.setCursor(cMano);
-		pDerecha.add(bEntrar);
+	
+	public void passwordField() {
+		tClaveUsuario = sObjGraficos.construirJPasswordField("", ((pDerecha.getWidth() - 300) / 2), 180, 300,
+				40, new Color(78, 115, 223), Color.DARK_GRAY, Color.BLUE, null,
+				border, "c");
+		pDerecha.add(tClaveUsuario);
 
-		bCerrar = new JButton("X");
-		bCerrar.setBounds(330, 10, 45, 30);
-		bCerrar.setFocusable(false);
-		bCerrar.setBackground(new Color(78, 115, 223));
-		bCerrar.setForeground(Color.WHITE);
-		bCerrar.setFont(fontBotones);
-		bCerrar.setCursor(cMano);
+	}
+	
+	public void crearJButtons() {
+		bEntrar = sObjGraficos.construirJButton("Siguiente >", (pDerecha.getWidth() - 125 / 2) - 125, 300, 125, 45,
+				sRecursos.getcMano(), null, sRecursos.getFontBotones(),sRecursos.getColorAzul(), Color.WHITE, null, "c", true);
+		pDerecha.add(bEntrar);
+		
+		bRegistrarse = sObjGraficos.construirJButton("Registrarse", (pDerecha.getWidth() - 125 / 2) - 280, 300, 125, 45,
+				sRecursos.getcMano(), null, sRecursos.getFontBotones(),sRecursos.getColorAzul(), Color.WHITE, null, "c", true);
+		pDerecha.add(bRegistrarse);
+		
+		bCerrar = sObjGraficos.construirJButton("X", 330, 10, 45, 30,
+				sRecursos.getcMano(), null, sRecursos.getFontBotones(),sRecursos.getColorAzul(), Color.WHITE, null, "c", true);
+
+		bCerrar.addActionListener(this);
 		pDerecha.add(bCerrar);
 
-		bRegistrarse = new JButton("Registrarse");
-		bRegistrarse.setBounds(((pDerecha.getWidth() - bEntrar.getWidth()) / 2) - 80, 300, 125, 45);
-		bRegistrarse.setFocusable(false);
-		bRegistrarse.setBackground(new Color(78, 115, 223));
-		bRegistrarse.setForeground(Color.WHITE);
-		bRegistrarse.setFont(fontBotones);
-		bRegistrarse.setCursor(cMano);
-		pDerecha.add(bRegistrarse);
 	}
+	
 	public void Jcrearlabels() {
-		lEslogan = new JLabel("Iniciar sesión");
-		lEslogan.setSize(190, 20);
-		lEslogan.setLocation((pIzquierda.getWidth() - lEslogan.getWidth()) / 2, 40);
-		lEslogan.setHorizontalAlignment(SwingConstants.CENTER);
-		lEslogan.setForeground(Color.DARK_GRAY);
-		lEslogan.setFont(fontTPrincipal);
-		pIzquierda.add(lEslogan);
-
-		lNotificaciones = new JLabel("¿Recordar contraseña?");
-		lNotificaciones.setSize(170, 20);
-		lNotificaciones.setLocation((pDerecha.getWidth() - lNotificaciones.getWidth()) / 2, 360);
-		lNotificaciones.setForeground(Color.DARK_GRAY);
-		lNotificaciones.setFont(fontSubtitulo);
-		lNotificaciones.setHorizontalAlignment(SwingConstants.CENTER);
+        //LABEL TITULO LOGIN-----------------------------------------------------------------------------
+        lEslogan = sObjGraficos.construirJLabel(
+            "Iniciar sesión", (pDerecha.getWidth() - 60) / 2, 40, 190, 20, 
+            null, Color.DARK_GRAY, null, sRecursos.getFontTPrincipal(), "c"
+        );
+        pIzquierda.add(lEslogan);
+		
+        lNotificaciones = sObjGraficos.construirJLabel(
+                "¿Recordar contraseña?", (pDerecha.getWidth() - 190) / 2, 360, 190, 20, 
+                null, Color.DARK_GRAY, null, sRecursos.getFontSubtitulo(), "c"
+            );
 		pDerecha.add(lNotificaciones);
 		
-		iDimAux = new ImageIcon(iUsuario.getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING));
-		lUsuario = new JLabel();
-		lUsuario.setBounds((pDerecha.getWidth() / 2) - 30, 60, 60, 60);
-		lUsuario.setIcon(iDimAux);
-		pDerecha.add(lUsuario);
+		iDimAux = new ImageIcon(sRecursos.getiUsuario().getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING));
+	    lUsuario= sObjGraficos.construirJLabel(null,(pDerecha.getWidth() / 2) - 30, 60, 60, 60, iDimAux, null, null, null, "c");
+	    pDerecha.add(lUsuario);
 		
-		iDimAux = new ImageIcon(iportada.getImage().getScaledInstance(350, 350, Image.SCALE_AREA_AVERAGING));
-		lPortada = new JLabel();
-		lPortada.setBounds((pDerecha.getWidth() / 2) - 100, 60, 360, 360);
-		lPortada.setIcon(iDimAux);
+		iDimAux = new ImageIcon(sRecursos.getIportada().getImage().getScaledInstance(350, 350, Image.SCALE_AREA_AVERAGING));
+		lPortada= sObjGraficos.construirJLabel(null,(pDerecha.getWidth() / 2) - 100, 60, 360, 360, iDimAux, null, null, null, "c");
 		pIzquierda.add(lPortada);
 		
-		iDimAux = new ImageIcon(iIconos.getImage().getScaledInstance(170, 50, Image.SCALE_AREA_AVERAGING));
-		lIconos = new JLabel();
-		lIconos.setBounds(30, 370, 180, 100);
-		lIconos.setIcon(iDimAux);
-		lIconos.setCursor(cMano);
+		iDimAux = new ImageIcon(sRecursos.getiIconos().getImage().getScaledInstance(170, 50, Image.SCALE_AREA_AVERAGING));
+		lIconos=sObjGraficos.construirJLabel(null,30, 370, 180, 100, iDimAux, null, null, null, "c");
 		pIzquierda.add(lIconos);
 
 	}
+	
 	public void crearObjDecoradores() {
-		// Fuentes
-		fontTPrincipal = new Font("Rockwell Extra Bold", Font.PLAIN, 20);
-		fontBotones = new Font("Bitstream Vera Sans", Font.BOLD, 14);
-		fontSubtitulo = new Font("Forte", Font.PLAIN, 13);
-
-		// Cursor
-		cMano = new Cursor(Cursor.HAND_CURSOR);
-
-		// Bodes
-		border = BorderFactory.createMatteBorder(0, 0, 2, 0, Color.DARK_GRAY);
-
-		// imagen Usuario
-		iUsuario = new ImageIcon("../clase4/recursos/perfil.png");
-		
-		// imagen portada
-		iportada = new ImageIcon("../clase4/recursos/imagen-estadistica.png");
-		
-		// redes sociales
-		iIconos = new ImageIcon("../clase4/recursos/icons.png");
-		
-
+		// decoradores
 	}
+	
 	public void crearCheckBox() {
-		checkSi = new JCheckBox("Si");
-		checkSi.setSize(45, 25);
-		checkSi.setFocusable(false);
-		checkSi.setBackground(new Color(78, 115, 223));
-		checkSi.setForeground(Color.DARK_GRAY);
-		checkSi.setFont(fontSubtitulo);
-		checkSi.setLocation((pDerecha.getWidth() - checkSi.getWidth()) / 2 - 15, 385);
-		pDerecha.add(checkSi);
 
-		checkNo = new JCheckBox("No");
-		checkNo.setSize(45, 25);
-		checkNo.setFocusable(false);
-		checkNo.setBackground(new Color(78, 115, 223));
-		checkNo.setForeground(Color.DARK_GRAY);
-		checkNo.setFont(fontSubtitulo);
-		checkNo.setLocation((pDerecha.getWidth() + checkNo.getWidth()) / 2 - 15, 385);
-		pDerecha.add(checkNo);
+        checkSi = sObjGraficos.construirJCheckBox(
+            "Si", ((pDerecha.getWidth() - 45) / 2 - 15), 385, 45, 25, sRecursos.getcMano(), null, null
+        );
+        pDerecha.add(checkSi);
+
+        checkNo = sObjGraficos.construirJCheckBox(
+            "No", ((pDerecha.getWidth() - 45) / 2 +25), 385, 45, 25, sRecursos.getcMano(), null, null
+        );
+        pDerecha.add(checkNo);
+
+        grupo = new ButtonGroup();
+        grupo.add(checkSi);
+        grupo.add(checkNo);
 		
-		grupo = new ButtonGroup();
-		grupo.add(checkSi);
-		grupo.add(checkNo);
-
 	}
+	
 	public void crearcomboBox() {
-		cbTipoUsuario = new JComboBox<String>();
-		cbTipoUsuario.addItem("Usuario");
-		cbTipoUsuario.addItem("Administrador");
-		cbTipoUsuario.addItem("invitado");
-		cbTipoUsuario.setSize(300, 40);
-		cbTipoUsuario.setFont(fontBotones);
-		cbTipoUsuario.setLocation((pDerecha.getWidth() - cbTipoUsuario.getWidth()) / 2, 240);
-		cbTipoUsuario.setForeground(Color.WHITE);
-		cbTipoUsuario.setBackground(new Color(78, 115, 223));
-		cbTipoUsuario.setCursor(cMano);
-		((JLabel) cbTipoUsuario.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+		cbTipoUsuario = sObjGraficos.construirJComboBox("Usuario_Admin_Invitado", (pDerecha.getWidth() - 300) / 2,
+				240, 300, 40, sRecursos.getColorAzul(), Color.WHITE, "c", sRecursos.getFontBotones());
 		pDerecha.add(cbTipoUsuario);
 
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+			if(e.getSource()==bCerrar) {
+				System.exit(0);
+			}
+			
 	}
 }

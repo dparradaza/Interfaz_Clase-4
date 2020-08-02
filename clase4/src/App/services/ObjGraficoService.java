@@ -207,8 +207,8 @@ public class ObjGraficoService {
     }
 
     public JComboBox<String> construirJComboBox(
-        String cadena, int x, int y, int ancho, int alto,Color colorFondo, Color colorFuente, String direccion
-    ){
+        String cadena, int x, int y, int ancho, int alto,Color colorFondo, Color colorFuente, String direccion,
+        Font font  ){
         comboBox=new JComboBox<String>();
         comboBox.setSize(ancho, alto);
         comboBox.setLocation(x, y);
@@ -218,6 +218,7 @@ public class ObjGraficoService {
         } 
         comboBox.setBackground(colorFondo);
         comboBox.setForeground(colorFuente);
+        comboBox.setFont(font);
         switch(direccion){
             case "c":
                 ((JLabel)comboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
