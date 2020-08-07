@@ -9,5 +9,5 @@ Ventana login
 
 clases
 
-![Alt text](clase3/recursos/clases.png?raw=true "clases")
+![Alt text](clase4/recursos/clases.png?raw=true "clases")
 
